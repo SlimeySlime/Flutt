@@ -26,13 +26,13 @@ class Answer extends StatelessWidget {
   // final Function _selectHandler;
   final VoidCallback _selectHandler;
 
-  Answer(this._answer_Text, this._selectHandler);
+  const Answer(this._answer_Text, this._selectHandler);
 
   @override
   Widget build(BuildContext context) {
     return Container(
         width: double.infinity,
-        padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+        padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
         child: ElevatedButton(
           onPressed: _selectHandler, // for now
           style: ButtonStyle(

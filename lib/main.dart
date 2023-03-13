@@ -1,7 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 import 'dart:developer';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:fluttuto/quiz.dart';
+import 'package:fluttuto/result.dart';
+import 'package:fluttuto/transaction.dart';
 import './question.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(QuestionApp());
@@ -18,63 +23,55 @@ class QuestionApp extends StatefulWidget {
 
 class _QuestionAppState extends State<QuestionApp> {
   // const QuestionApp({super.key})
-  var _question_index = 0;
-
-  // var _questions = [
-  //   'What\'s your favorite Color?',
-  //   'What\'s your favorite Animal? ',
-  // ];
-  final _questions = [
-    {
-      'questionText': 'What\'s your favorite Color?',
-      'answers': [
-        'Red',
-        'Green',
-        'Blue',
-        'Pink',
-        'Yellow',
-        'Rainbow',
-        'Black',
-        'White'
-      ]
-    },
-    {
-      'questionText': 'What\'s your favorite Animal?',
-      'answers': ['Dog', 'Cat', 'Hamster', 'Bird', 'Platypus']
-    },
-    {
-      'questionText': 'What\'s your most value ?',
-      'answers': ['Fame', 'Right', 'Money', 'Power', 'Goodness']
-    }
+  final List<Transaction> _transactions = [
+    Transaction(id: 't1', title: 'initial', amount: 0, date: DateTime.now()),
+    Transaction(
+        id: 't2',
+        title: 'this online lecture',
+        amount: 22900,
+        date: DateTime.now()),
+    Transaction(id: 't3', title: 'breads', amount: 14000, date: DateTime.now()),
   ];
-
-  void _answerQuestion({int index = 1}) {
-    // print('Answer Choosen! $index');
-    setState(() {
-      if (_question_index < _questions.length - 1) _question_index += 1;
-      log('Question Index : $_question_index');
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: Scaffold(
-      appBar: AppBar(
-        title: Text("Hello Flutter"),
-      ),
-      body: Column(
-        children: [
-          Question(
-            questionText: _questions[_question_index]['questionText'],
-          ),
-          ...(_questions[_question_index]['answers'] as List<String>)
-              .map((answer) {
-            return Answer(answer, _answerQuestion);
-          })
-          // Answer("Answer3", _answerQuestion),
+        title: "Flutter Tutoring",
+        theme: ThemeData(
+          primaryColor: Colors.green,
+        ),
+        localizationsDelegates: const [
+          GlobalWidgetsLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
         ],
-      ),
-    ));
+        home: Scaffold(
+            appBar: AppBar(
+              title: Text("Hello Flutter App"),
+            ),
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.all(15),
+                  width: 300,
+                  child: Card(
+                    color: Colors.blue,
+                    child: Padding(
+                      padding: EdgeInsets.all(15),
+                      child: Text('Chart - - -'),
+                    ),
+                  ),
+                ),
+                Column(
+                  children: _transactions
+                      .map((e) => TransationCard(
+                            transactionInfo: e,
+                          ))
+                      .toList(),
+                ),
+              ],
+            )));
   }
 }
