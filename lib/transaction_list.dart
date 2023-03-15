@@ -14,16 +14,17 @@ class Transaction {
       required this.date});
 }
 
-class TransationCard extends StatelessWidget {
+class TransactionCard extends StatelessWidget {
   final Transaction transactionInfo;
 
-  const TransationCard({super.key, required this.transactionInfo});
+  const TransactionCard({super.key, required this.transactionInfo});
 
   @override
   Widget build(BuildContext context) {
     Intl.defaultLocale = 'ko_KR';
 
     return Card(
+      elevation: 5,
       child: Row(children: [
         Container(
           decoration:
@@ -31,7 +32,7 @@ class TransationCard extends StatelessWidget {
           margin: const EdgeInsets.all(10),
           padding: const EdgeInsets.all(15),
           child: Text(
-            '\$ ${transactionInfo.amount}',
+            '\$ ${transactionInfo.amount.toStringAsFixed(0)}',
             style: TextStyle(
               fontWeight: FontWeight.lerp(FontWeight.w100, FontWeight.w800, 2),
             ),
@@ -46,7 +47,7 @@ class TransationCard extends StatelessWidget {
             ),
             Text(
               // transactionInfo.date.toString(),
-              DateFormat('yyyy-MM-dd').format(transactionInfo.date),
+              DateFormat().format(transactionInfo.date),
               style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],
