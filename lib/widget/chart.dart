@@ -22,11 +22,10 @@ class Chart extends StatelessWidget {
           totalSum += recentTransactions[i].amount;
         }
       }
-      print(DateFormat.E().format(weekDay));
+      // print(DateFormat.E().format(weekDay));
       // print(DateFormat.E(weekDay).format(weekDay));
-
       return {'day': DateFormat.E().format(weekDay), 'amount': totalSum};
-    });
+    }).reversed.toList();
   }
 
   double get totalSpending {
@@ -37,25 +36,26 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(groupedTransactions);
-    return Card(
-      elevation: 6,
-      margin: const EdgeInsets.all(16),
-      child: Container(
-        padding: EdgeInsets.all(4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: groupedTransactions.map((data) {
-            return Flexible(
-              fit: FlexFit.tight,
-              child: ChartBar(
-                  label: data['day'].toString(),
-                  spendingAmount: (data['amount'] as double),
-                  spendingPercent: totalSpending == 0
-                      ? 0.0
-                      : (data['amount'] as double) / totalSpending),
-            );
-          }).toList(),
+    return Container(
+      child: Card(
+        elevation: 6,
+        margin: const EdgeInsets.all(16),
+        child: Container(
+          padding: EdgeInsets.all(4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: groupedTransactions.map((data) {
+              return Flexible(
+                fit: FlexFit.tight,
+                child: ChartBar(
+                    label: data['day'].toString(),
+                    spendingAmount: (data['amount'] as double),
+                    spendingPercent: totalSpending == 0
+                        ? 0.0
+                        : (data['amount'] as double) / totalSpending),
+              );
+            }).toList(),
+          ),
         ),
       ),
     );

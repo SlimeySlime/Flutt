@@ -7,6 +7,7 @@ import 'package:fluttuto/result.dart';
 import 'package:fluttuto/widget/chart.dart';
 import 'package:fluttuto/widget/transaction.dart';
 import 'package:fluttuto/widget/transaction_list.dart';
+import 'package:intl/intl.dart';
 import './question.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logger/logger.dart';
@@ -15,29 +16,47 @@ var logger = Logger();
 
 void main() {
   logger.d('Logger Working with it');
-  runApp(MaterialApp(home: QuestionApp()));
+  // WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  runApp(MaterialApp(home: TransactionApp()));
 }
 
-class QuestionApp extends StatefulWidget {
-  const QuestionApp({super.key});
+class TransactionApp extends StatefulWidget {
+  const TransactionApp({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _QuestionAppState();
+    return _TransactionAppState();
   }
 }
 
-class _QuestionAppState extends State<QuestionApp> {
-  // const QuestionApp({super.key})
+class _TransactionAppState extends State<TransactionApp> {
+  // const TransactionApp({super.key})
   final List<Transaction> _transactions = [
-    // Transaction(id: 't1', title: 'initial', amount: 0, date: DateTime.now()),
-    // Transaction(
-    //     id: 't2',
-    //     title: 'this online lecture',
-    //     amount: 22900,
-    //     date: DateTime.now()),
-    // Transaction(id: 't3', title: 'breads', amount: 14000, date: DateTime.now()),
+    Transaction(id: 't1', title: 'initial', amount: 0, date: DateTime.now()),
+    Transaction(id: 't12', title: 'initial', amount: 0, date: DateTime.now()),
+    Transaction(id: 't13', title: 'initial', amount: 0, date: DateTime.now()),
+    Transaction(id: 't14', title: 'initial', amount: 0, date: DateTime.now()),
+    Transaction(id: 't15', title: 'initial', amount: 0, date: DateTime.now()),
+    Transaction(id: 't16', title: 'initial', amount: 0, date: DateTime.now()),
+    Transaction(id: 't17', title: 'initial', amount: 0, date: DateTime.now()),
+    Transaction(id: 't18', title: 'initial', amount: 0, date: DateTime.now()),
+    Transaction(id: 't19', title: 'initial', amount: 0, date: DateTime.now()),
+    Transaction(id: 't10', title: 'initial', amount: 0, date: DateTime.now()),
+    Transaction(id: 't100', title: 'initial', amount: 0, date: DateTime.now()),
+    Transaction(
+        id: 't2',
+        title: 'this online lecture',
+        amount: 22900,
+        date: DateTime.now()),
+    Transaction(id: 't3', title: 'breads', amount: 14000, date: DateTime.now()),
   ];
+
+  final titleController = TextEditingController();
+  final amountController = TextEditingController();
 
   List<Transaction> get _recentTransactions {
     return _transactions.where((element) {
@@ -47,11 +66,12 @@ class _QuestionAppState extends State<QuestionApp> {
     }).toList();
   }
 
-  void _addNewTransaction(String enteredTitle, double enteredAmount) {
+  void _addNewTransaction(
+      String enteredTitle, double enteredAmount, DateTime choosenDate) {
     var title = enteredTitle;
     var amount = enteredAmount;
 
-    if (title.isEmpty || amount.isNaN || amount <= 0) {
+    if (title.isEmpty || amount.isNaN || amount < 0 || choosenDate == null) {
       // TODO - TOAST message
       return;
     }
@@ -59,14 +79,18 @@ class _QuestionAppState extends State<QuestionApp> {
         id: DateTime.now().toString(),
         title: title,
         amount: amount,
-        date: DateTime.now());
+        date: choosenDate);
     setState(() {
       _transactions.add(newTransaction);
     });
   }
 
-  final titleController = TextEditingController();
-  final amountController = TextEditingController();
+  void _deleteTransaction(String id) {
+    setState(() {
+      print('deleted list ${_transactions.where((item) => item.id == id)} ');
+      _transactions.removeWhere((item) => item.id == id);
+    });
+  }
 
   void _showToast(BuildContext context, String toastMessage) {
     final scaffold = ScaffoldMessenger.of(context);
@@ -93,6 +117,17 @@ class _QuestionAppState extends State<QuestionApp> {
 
   @override
   Widget build(BuildContext context) {
+    var appBar = AppBar(
+      title: Text("Hello Flutter App"),
+      actions: [
+        IconButton(
+            onPressed: () => opneAddNewTransaction(context),
+            icon: Icon(
+              Icons.add,
+              color: Colors.white,
+            ))
+      ],
+    );
     return MaterialApp(
         title: "Flutter Tutoring",
         theme: ThemeData(
@@ -110,18 +145,12 @@ class _QuestionAppState extends State<QuestionApp> {
           GlobalMaterialLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
+        supportedLocales: const [
+          Locale('kr', 'KR'),
+          Locale('en', 'US'),
+        ],
         home: Scaffold(
-          appBar: AppBar(
-            title: Text("Hello Flutter App"),
-            actions: [
-              IconButton(
-                  onPressed: () => opneAddNewTransaction(context),
-                  icon: Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ))
-            ],
-          ),
+          appBar: appBar,
           body: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -129,14 +158,21 @@ class _QuestionAppState extends State<QuestionApp> {
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.all(15),
-                  width: 600,
+                  // width: 600,
+                  height: (MediaQuery.of(context).size.height -
+                          appBar.preferredSize.height -
+                          MediaQuery.of(context).padding.top) *
+                      0.3,
                   child: Chart(
                     recentTransactions: _recentTransactions,
                   ),
                 ),
                 // TransactionInput(addNewTransaction: _addNewTransaction),
                 SizedBox(
-                  height: 300,
+                  height: (MediaQuery.of(context).size.height -
+                          appBar.preferredSize.height -
+                          MediaQuery.of(context).padding.top) *
+                      0.6,
                   child: _transactions.isEmpty
                       ? Column(
                           children: [
@@ -153,9 +189,36 @@ class _QuestionAppState extends State<QuestionApp> {
                         )
                       : ListView.builder(
                           itemCount: _transactions.length,
-                          itemBuilder: (context, index) => TransactionCard(
-                              transactionInfo: _transactions[index])),
-                ),
+                          itemBuilder: (context, index) =>
+                              // itemBuilder: (context, index) =>
+                              // TransactionCard(transactionInfo: _transactions[index]),
+                              ListTile(
+                            leading: CircleAvatar(
+                              radius: 50,
+                              child: Padding(
+                                  padding: EdgeInsets.all(15),
+                                  child: FittedBox(
+                                    child: Text(
+                                        '${_transactions[index].amount} 원'),
+                                  )),
+                            ),
+                            title: Text(
+                              _transactions[index].title,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            subtitle: Text(
+                              DateFormat.yMMM()
+                                  .format((_transactions[index].date)),
+                            ),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete),
+                              color: Theme.of(context).primaryColor,
+                              onPressed: () =>
+                                  _deleteTransaction(_transactions[index].id),
+                            ),
+                          ),
+                        ),
+                )
               ],
             ),
           ),
