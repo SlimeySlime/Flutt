@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 import 'dart:developer';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttuto/quiz.dart';
@@ -34,19 +35,35 @@ class TransactionApp extends StatefulWidget {
 }
 
 class _TransactionAppState extends State<TransactionApp> {
+  @override
+  void initState() {
+    const availableColors = [
+      Colors.red,
+      Colors.cyan,
+      Colors.brown,
+      Colors.amber,
+      Colors.blue,
+      Colors.green,
+    ];
+    _bgColor = availableColors[Random().nextInt(availableColors.length)];
+    super.initState();
+  }
+
+  late Color _bgColor;
+
   // const TransactionApp({super.key})
   final List<Transaction> _transactions = [
     Transaction(id: 't1', title: 'initial', amount: 0, date: DateTime.now()),
-    Transaction(id: 't12', title: 'initial', amount: 0, date: DateTime.now()),
-    Transaction(id: 't13', title: 'initial', amount: 0, date: DateTime.now()),
-    Transaction(id: 't14', title: 'initial', amount: 0, date: DateTime.now()),
-    Transaction(id: 't15', title: 'initial', amount: 0, date: DateTime.now()),
-    Transaction(id: 't16', title: 'initial', amount: 0, date: DateTime.now()),
-    Transaction(id: 't17', title: 'initial', amount: 0, date: DateTime.now()),
-    Transaction(id: 't18', title: 'initial', amount: 0, date: DateTime.now()),
-    Transaction(id: 't19', title: 'initial', amount: 0, date: DateTime.now()),
-    Transaction(id: 't10', title: 'initial', amount: 0, date: DateTime.now()),
-    Transaction(id: 't100', title: 'initial', amount: 0, date: DateTime.now()),
+    Transaction(id: 't12', title: 'initial2', amount: 1, date: DateTime.now()),
+    Transaction(id: 't13', title: 'initial3', amount: 2, date: DateTime.now()),
+    Transaction(id: 't14', title: 'initial4', amount: 3, date: DateTime.now()),
+    Transaction(id: 't15', title: 'initial5', amount: 40, date: DateTime.now()),
+    Transaction(id: 't16', title: 'initial6', amount: 50, date: DateTime.now()),
+    Transaction(id: 't17', title: 'initial7', amount: 60, date: DateTime.now()),
+    Transaction(id: 't18', title: 'initial8', amount: 70, date: DateTime.now()),
+    Transaction(id: 't19', title: 'initial9', amount: 80, date: DateTime.now()),
+    Transaction(
+        id: 't10', title: 'initial10', amount: 90, date: DateTime.now()),
     Transaction(
         id: 't2',
         title: 'this online lecture',
@@ -117,6 +134,7 @@ class _TransactionAppState extends State<TransactionApp> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
     var appBar = AppBar(
       title: Text("Hello Flutter App"),
       actions: [
@@ -145,10 +163,10 @@ class _TransactionAppState extends State<TransactionApp> {
           GlobalMaterialLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: const [
-          Locale('kr', 'KR'),
-          Locale('en', 'US'),
-        ],
+        // supportedLocales: const [
+        //   Locale('kr', 'KR'),
+        //   Locale('en', 'US'),
+        // ],
         home: Scaffold(
           appBar: appBar,
           body: SingleChildScrollView(
@@ -189,34 +207,39 @@ class _TransactionAppState extends State<TransactionApp> {
                         )
                       : ListView.builder(
                           itemCount: _transactions.length,
-                          itemBuilder: (context, index) =>
-                              // itemBuilder: (context, index) =>
-                              // TransactionCard(transactionInfo: _transactions[index]),
-                              ListTile(
-                            leading: CircleAvatar(
-                              radius: 50,
-                              child: Padding(
-                                  padding: EdgeInsets.all(15),
-                                  child: FittedBox(
-                                    child: Text(
-                                        '${_transactions[index].amount} 원'),
-                                  )),
-                            ),
-                            title: Text(
-                              _transactions[index].title,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            subtitle: Text(
-                              DateFormat.yMMM()
-                                  .format((_transactions[index].date)),
-                            ),
-                            trailing: IconButton(
-                              icon: Icon(Icons.delete),
-                              color: Theme.of(context).primaryColor,
-                              onPressed: () =>
-                                  _deleteTransaction(_transactions[index].id),
-                            ),
-                          ),
+                          itemBuilder: (context, index) => true
+                              ? TransactionCard(
+                                  key: ValueKey(_transactions[index].id),
+                                  transactionInfo: _transactions[index],
+                                  transactionDelete: _deleteTransaction,
+                                )
+                              : ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundColor: _bgColor,
+                                    radius: 50,
+                                    child: Padding(
+                                        padding: EdgeInsets.all(10),
+                                        child: FittedBox(
+                                          child: Text(
+                                              '${_transactions[index].amount}'),
+                                        )),
+                                  ),
+                                  title: Text(
+                                    _transactions[index].title,
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  subtitle: Text(
+                                    DateFormat.yMMM()
+                                        .format((_transactions[index].date)),
+                                  ),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.delete),
+                                    color: Theme.of(context).primaryColor,
+                                    onPressed: () => _deleteTransaction(
+                                        _transactions[index].id),
+                                  ),
+                                ),
                         ),
                 )
               ],
